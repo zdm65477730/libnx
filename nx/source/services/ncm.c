@@ -43,6 +43,10 @@ static Result _ncmCmdInU8(Service* srv, u8 inval, u32 cmd_id) {
     return serviceDispatchIn(srv, cmd_id, inval);
 }
 
+static Result _ncmCmdInU32(Service* srv, u32 inval, u32 cmd_id) {
+    return serviceDispatchIn(srv, cmd_id, inval);
+}
+
 static Result _ncmCmdInContentId(Service* srv, const NcmContentId* inval, u32 cmd_id) {
     return serviceDispatchIn(srv, cmd_id, *inval);
 }
@@ -120,6 +124,11 @@ Result ncmInactivateContentMetaDatabase(NcmStorageId storage_id) {
 Result ncmInvalidateRightsIdCache(void) {
     if (hosversionBefore(9,0,0)) return MAKERESULT(Module_Libnx, LibnxError_IncompatSysVer);
     return _ncmCmdNoIO(&g_ncmSrv, 13);
+}
+
+Result ncmActivateFsContentStorage(FsContentStorageId fs_storage_id) {
+    if (!hosversionIsAtmosphere() && hosversionBefore(16,0,0)) return MAKERESULT(Module_Libnx, LibnxError_IncompatSysVer);
+    return _ncmCmdInU32(&g_ncmSrv, fs_storage_id, 15);
 }
 
 void ncmContentStorageClose(NcmContentStorage* cs) {

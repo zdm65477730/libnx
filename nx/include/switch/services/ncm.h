@@ -50,6 +50,7 @@ Result ncmInactivateContentStorage(NcmStorageId storage_id); ///< [2.0.0+]
 Result ncmActivateContentMetaDatabase(NcmStorageId storage_id); ///< [2.0.0+]
 Result ncmInactivateContentMetaDatabase(NcmStorageId storage_id); ///< [2.0.0+]
 Result ncmInvalidateRightsIdCache(void); ///< [9.0.0+]
+Result ncmActivateFsContentStorage(FsContentStorageId fs_storage_id); ///< [16.0.0+]
 
 void ncmContentStorageClose(NcmContentStorage* cs);
 Result ncmContentStorageGeneratePlaceHolderId(NcmContentStorage* cs, NcmPlaceHolderId* out_id);
