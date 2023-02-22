@@ -486,7 +486,7 @@ Result ncmContentMetaDatabaseGetRequiredSystemVersion(NcmContentMetaDatabase* db
     return serviceDispatchInOut(&db->s, 11, *key, *out_version);
 }
 
-Result ncmContentMetaDatabaseGetPatchId(NcmContentMetaDatabase* db, u64* out_patch_id, const NcmContentMetaKey* key) {
+Result ncmContentMetaDatabaseGetPatchContentMetaId(NcmContentMetaDatabase* db, u64* out_patch_id, const NcmContentMetaKey* key) {
     return serviceDispatchInOut(&db->s, 12, *key, *out_patch_id);
 }
 
