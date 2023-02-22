@@ -276,21 +276,33 @@ Result ncmContentStorageReadContentIdFile(NcmContentStorage* cs, void* out_data,
     );
 }
 
-Result ncmContentStorageGetRightsIdFromPlaceHolderId(NcmContentStorage* cs, NcmRightsId* out_rights_id, const NcmPlaceHolderId* placeholder_id) {
+Result ncmContentStorageGetRightsIdFromPlaceHolderId(NcmContentStorage* cs, NcmRightsId* out_rights_id, const NcmPlaceHolderId* placeholder_id, FsContentAttributes attr) {
     if (hosversionBefore(2,0,0)) return MAKERESULT(Module_Libnx, LibnxError_IncompatSysVer);
+
+    const struct {
+        NcmPlaceHolderId placeholder_id;
+        u8 attr;
+    } in = { *placeholder_id, attr };
+
     if (hosversionBefore(3,0,0))
-        return serviceDispatchInOut(&cs->s, 19, *placeholder_id, out_rights_id->rights_id);
+        return serviceDispatchInOut(&cs->s, 19, in, out_rights_id->rights_id);
     else
-        return serviceDispatchInOut(&cs->s, 19, *placeholder_id, *out_rights_id);
+        return serviceDispatchInOut(&cs->s, 19, in, *out_rights_id);
 }
 
-Result ncmContentStorageGetRightsIdFromContentId(NcmContentStorage* cs, NcmRightsId* out_rights_id, const NcmContentId* content_id) {
+Result ncmContentStorageGetRightsIdFromContentId(NcmContentStorage* cs, NcmRightsId* out_rights_id, const NcmContentId* content_id, FsContentAttributes attr) {
     if (hosversionBefore(2,0,0)) return MAKERESULT(Module_Libnx, LibnxError_IncompatSysVer);
     memset(out_rights_id, 0, sizeof(*out_rights_id));
+
+    const struct {
+        NcmContentId content_id;
+        u8 attr;
+    } in = { *content_id, attr };
+
     if (hosversionBefore(3,0,0))
-        return serviceDispatchInOut(&cs->s, 20, *content_id, out_rights_id->rights_id);
+        return serviceDispatchInOut(&cs->s, 20, in, out_rights_id->rights_id);
     else
-        return serviceDispatchInOut(&cs->s, 20, *content_id, *out_rights_id);
+        return serviceDispatchInOut(&cs->s, 20, in, *out_rights_id);
 }
 
 Result ncmContentStorageWriteContentForDebug(NcmContentStorage* cs, const NcmContentId* content_id, s64 offset, const void* data, size_t data_size) {
@@ -330,12 +342,13 @@ Result ncmContentStorageRepairInvalidFileAttribute(NcmContentStorage* cs) {
     return _ncmCmdNoIO(&cs->s, 26);
 }
 
-Result ncmContentStorageGetRightsIdFromPlaceHolderIdWithCache(NcmContentStorage* cs, NcmRightsId* out_rights_id, const NcmPlaceHolderId* placeholder_id, const NcmContentId* cache_content_id) {
+Result ncmContentStorageGetRightsIdFromPlaceHolderIdWithCache(NcmContentStorage* cs, NcmRightsId* out_rights_id, const NcmPlaceHolderId* placeholder_id, const NcmContentId* cache_content_id, FsContentAttributes attr) {
     if (hosversionBefore(8,0,0)) return MAKERESULT(Module_Libnx, LibnxError_IncompatSysVer);
     const struct {
-        NcmContentId cache_content_id;
         NcmPlaceHolderId placeholder_id;
-    } in = { *cache_content_id, *placeholder_id };
+        NcmContentId cache_content_id;
+        u8 attr;
+    } in = { *placeholder_id, *cache_content_id, attr };
 
     if (hosversionBefore(3,0,0))
         return serviceDispatchInOut(&cs->s, 27, in, out_rights_id->rights_id);
